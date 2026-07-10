@@ -68,12 +68,12 @@
     var n = 0;
     function done() { n++; if (n >= 2 && sidebarData && articles) cb(); }
     var x1 = new XMLHttpRequest();
-    x1.open('GET', '/docs-config.json?t=' + Date.now(), true);
+    x1.open('GET', '/docs-config.json', true);
     x1.onload = function() { try { sidebarData = JSON.parse(x1.responseText); } catch(e) {} done(); };
     x1.onerror = function() { done(); };
     x1.send();
     var x2 = new XMLHttpRequest();
-    x2.open('GET', '/docs-articles.json?t=' + Date.now(), true);
+    x2.open('GET', '/docs-articles.json', true);
     x2.onload = function() { try { articles = JSON.parse(x2.responseText); } catch(e) {} done(); };
     x2.onerror = function() { done(); };
     x2.send();
@@ -665,6 +665,8 @@
     if (window.location.hash.startsWith('#docs') || window.location.hash.startsWith('#skills')) {
       setTimeout(onHashChange, 100);
     }
+    // 预载文当前数据 — 用户点文档时已就绪
+    setTimeout(function() { loadData(function(){}); }, 2000);
   }
 
   if (document.readyState === 'loading') {
