@@ -14,7 +14,7 @@
     var link = document.createElement('link');
     link.id = 'oc-docs-css';
     link.rel = 'stylesheet';
-    link.href = '/assets/css/docs.css';
+    link.href = '/assets/docs-site.css?v=2';
     document.head.appendChild(link);
     var style = document.createElement('style');
     style.id = 'oc-docs-body-fix';
@@ -67,21 +67,15 @@
     if (sidebarData && articles) { cb(); return; }
     var n = 0;
     function done() { n++; if (n >= 2 && sidebarData && articles) cb(); }
-    var failTimeout = setTimeout(function() {
-      if (!sidebarData) sidebarData = [];
-      if (!articles) articles = {};
-      done();
-      done();
-    }, 15000);
     var x1 = new XMLHttpRequest();
-    x1.open('GET', '/docs-config.json', true);
-    x1.onload = function() { try { sidebarData = JSON.parse(x1.responseText); } catch(e) { sidebarData = []; } done(); };
-    x1.onerror = function() { sidebarData = []; done(); };
+    x1.open('GET', '/docs-config.json?t=' + Date.now(), true);
+    x1.onload = function() { try { sidebarData = JSON.parse(x1.responseText); } catch(e) {} done(); };
+    x1.onerror = function() { done(); };
     x1.send();
     var x2 = new XMLHttpRequest();
-    x2.open('GET', '/docs-articles.json', true);
-    x2.onload = function() { try { articles = JSON.parse(x2.responseText); } catch(e) { articles = {}; } done(); };
-    x2.onerror = function() { articles = {}; done(); };
+    x2.open('GET', '/docs-articles.json?t=' + Date.now(), true);
+    x2.onload = function() { try { articles = JSON.parse(x2.responseText); } catch(e) {} done(); };
+    x2.onerror = function() { done(); };
     x2.send();
   }
 
